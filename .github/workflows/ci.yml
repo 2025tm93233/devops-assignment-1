@@ -1,0 +1,24 @@
+name: Test and build Docker image
+
+on:
+  push:
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Run unit tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes python3-tk
+          python3 -m unittest discover -s . -p "test_*.py" -v
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --tag aceest-fitness:${{ github.sha }} \
+            --tag aceest-fitness:latest \
+            .
